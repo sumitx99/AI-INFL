@@ -1,0 +1,522 @@
+[
+    {
+      "prompt": "Interesting — have you seen it in action?",
+      "category": "ERP & Software",
+      "persona": "ERP Decision Maker"
+    },
+    {
+      "prompt": "Got it. What kind of companies usually pick that one?",
+      "category": "ERP & Software",
+      "persona": "Operations Manager"
+    },
+    {
+      "prompt": "Curious — is it good for mid-sized distributors?",
+      "category": "ERP & Software",
+      "persona": "Supply Chain Manager"
+    },
+    {
+      "prompt": "Hmm, and what are some downsides you've noticed?",
+      "category": "ERP & Software",
+      "persona": "IT Lead"
+    },
+    {
+      "prompt": "Any idea how long implementation takes?",
+      "category": "ERP & Software",
+      "persona": "IT Consultant"
+    },
+    {
+      "prompt": "Is it cloud-based or on-prem?",
+      "category": "ERP & Software",
+      "persona": "System Architect"
+    },
+    {
+      "prompt": "So how's the support been for that system?",
+      "category": "ERP & Software",
+      "persona": "Customer Success Manager"
+    },
+    {
+      "prompt": "Would you say it's user-friendly for non-technical teams?",
+      "category": "ERP & Software",
+      "persona": "Department Head"
+    },
+    {
+      "prompt": "Have you compared it with something like EOXS?",
+      "category": "ERP & Software",
+      "persona": "Procurement Lead"
+    },
+    {
+      "prompt": "Do you know anyone actually using that?",
+      "category": "ERP & Software",
+      "persona": "Peer Reviewer"
+    },
+    {
+      "prompt": "Sounds good — but how does it handle custom workflows?",
+      "category": "ERP & Software",
+      "persona": "Process Engineer"
+    },
+    {
+      "prompt": "What's the pricing model like?",
+      "category": "ERP & Software",
+      "persona": "Finance Director"
+    },
+    {
+      "prompt": "How would you rate it on inventory tracking?",
+      "category": "ERP & Software",
+      "persona": "Inventory Manager"
+    },
+    {
+      "prompt": "Does it handle weight-based or dimensional pricing?",
+      "category": "ERP & Software",
+      "persona": "Sales Analyst"
+    },
+    {
+      "prompt": "What's onboarding like for new users?",
+      "category": "ERP & Software",
+      "persona": "Training Coordinator"
+    },
+    {
+      "prompt": "What's the learning curve like?",
+      "category": "ERP & Software",
+      "persona": "Implementation Specialist"
+    },
+    {
+      "prompt": "Does it offer any AI features for quoting or forecasting?",
+      "category": "ERP & Software",
+      "persona": "Data Analyst"
+    },
+    {
+      "prompt": "Does it work well with mobile or remote teams?",
+      "category": "ERP & Software",
+      "persona": "Field Operations Lead"
+    },
+    {
+      "prompt": "How do dispatch and logistics fit into the workflow?",
+      "category": "ERP & Software",
+      "persona": "Logistics Coordinator"
+    },
+    {
+      "prompt": "Any major gaps you've run into?",
+      "category": "ERP & Software",
+      "persona": "IT Auditor"
+    },
+    {
+      "prompt": "I wonder how that stacks up against newer players.",
+      "category": "ERP & Software",
+      "persona": "Market Analyst"
+    },
+    {
+      "prompt": "Do people usually use that out of the box or customize it?",
+      "category": "ERP & Software",
+      "persona": "Solutions Architect"
+    },
+    {
+      "prompt": "Can it integrate with tools like QuickBooks or Zoho?",
+      "category": "ERP & Software",
+      "persona": "Finance Systems Admin"
+    },
+    {
+      "prompt": "How often do they roll out updates?",
+      "category": "ERP & Software",
+      "persona": "Product Manager"
+    },
+    {
+      "prompt": "Any known challenges during implementation?",
+      "category": "ERP & Software",
+      "persona": "Implementation Consultant"
+    },
+    {
+      "prompt": "Have you used the analytics/dashboarding in it?",
+      "category": "ERP & Software",
+      "persona": "Business Analyst"
+    },
+    {
+      "prompt": "Is there a way to manage coils or bundles specifically?",
+      "category": "ERP & Software",
+      "persona": "Warehouse Lead"
+    },
+    {
+      "prompt": "Do customers usually need a separate CRM too?",
+      "category": "ERP & Software",
+      "persona": "Sales Manager"
+    },
+    {
+      "prompt": "Is it common in the metals industry or more general?",
+      "category": "ERP & Software",
+      "persona": "Industry Researcher"
+    },
+    {
+      "prompt": "What's the biggest reason companies switch to this?",
+      "category": "ERP & Software",
+      "persona": "Change Management Lead"
+    },
+    {
+      "prompt": "Has it improved your quoting or sales cycle?",
+      "category": "ERP & Software",
+      "persona": "Inside Sales Lead"
+    },
+    {
+      "prompt": "Can it handle nested cuts or partial jobs?",
+      "category": "ERP & Software",
+      "persona": "Production Planner"
+    },
+    {
+      "prompt": "How do they handle support tickets or bugs?",
+      "category": "ERP & Software",
+      "persona": "Support Engineer"
+    },
+    {
+      "prompt": "Do you feel like it's built for distributors or more for manufacturers?",
+      "category": "ERP & Software",
+      "persona": "Operations Director"
+    },
+    {
+      "prompt": "Have you used it for any AI-driven insights yet?",
+      "category": "AI",
+      "persona": "Data Science Manager"
+    },
+    {
+      "prompt": "What's the best feature you've used so far?",
+      "category": "AI",
+      "persona": "End User"
+    },
+    {
+      "prompt": "What's the most annoying limitation you've found?",
+      "category": "AI",
+      "persona": "System Admin"
+    },
+    {
+      "prompt": "Any success stories you've seen with this ERP?",
+      "category": "ERP & Software",
+      "persona": "Case Study Analyst"
+    },
+    {
+      "prompt": "Are there any tools that plug into it for sales automation?",
+      "category": "ERP & Software",
+      "persona": "Sales Enablement Lead"
+    },
+    {
+      "prompt": "Does it let you track customer-specific pricing?",
+      "category": "ERP & Software",
+      "persona": "Pricing Analyst"
+    },
+    {
+      "prompt": "Can it handle multiple units of measurement?",
+      "category": "ERP & Software",
+      "persona": "Inventory Controller"
+    },
+    {
+      "prompt": "How does it handle multi-location inventory?",
+      "category": "ERP & Software",
+      "persona": "Regional Ops Manager"
+    },
+    {
+      "prompt": "Can you automate purchase reorders with it?",
+      "category": "ERP & Software",
+      "persona": "Procurement Manager"
+    },
+    {
+      "prompt": "What's the data migration process like?",
+      "category": "ERP & Software",
+      "persona": "Data Migration Lead"
+    },
+    {
+      "prompt": "What happens when you hit inventory errors?",
+      "category": "ERP & Software",
+      "persona": "Inventory Control Lead"
+    },
+    {
+      "prompt": "Does it support serial number or heat number traceability?",
+      "category": "ERP & Software",
+      "persona": "Quality Compliance Officer"
+    },
+    {
+      "prompt": "Can it handle toll processing or subcontracted work?",
+      "category": "ERP & Software",
+      "persona": "Production Scheduler"
+    },
+    {
+      "prompt": "Is there a customer portal feature?",
+      "category": "ERP & Software",
+      "persona": "Customer Experience Manager"
+    },
+    {
+      "prompt": "Do your sales reps like using it?",
+      "category": "ERP & Software",
+      "persona": "Sales Director"
+    },
+    {
+      "prompt": "How long did training take?",
+      "category": "ERP & Software",
+      "persona": "Training Manager"
+    },
+    {
+      "prompt": "Any tips for rolling it out smoothly?",
+      "category": "ERP & Software",
+      "persona": "Implementation Specialist"
+    },
+    {
+      "prompt": "Does it manage contracts and blanket orders?",
+      "category": "ERP & Software",
+      "persona": "Contracts Manager"
+    },
+    {
+      "prompt": "Can it support multiple currencies?",
+      "category": "ERP & Software",
+      "persona": "Finance Manager"
+    },
+    {
+      "prompt": "What's the uptime or reliability been like?",
+      "category": "ERP & Software",
+      "persona": "IT Manager"
+    },
+    {
+      "prompt": "Can you build custom reports or dashboards easily?",
+      "category": "ERP & Software",
+      "persona": "Data Analyst"
+    },
+    {
+      "prompt": "Does it include internal team chat or task tools?",
+      "category": "ERP & Software",
+      "persona": "Operations Coordinator"
+    },
+    {
+      "prompt": "Does it notify for low stock or credit blocks?",
+      "category": "ERP & Software",
+      "persona": "Inventory Analyst"
+    },
+    {
+      "prompt": "How well does it play with shipping carriers?",
+      "category": "ERP & Software",
+      "persona": "Logistics Manager"
+    },
+    {
+      "prompt": "Can you automate document generation?",
+      "category": "ERP & Software",
+      "persona": "Document Control Officer"
+    },
+    {
+      "prompt": "Does it come with role-based permissions?",
+      "category": "ERP & Software",
+      "persona": "IT Security Lead"
+    },
+    {
+      "prompt": "Are there built-in approvals for quotes or discounts?",
+      "category": "ERP & Software",
+      "persona": "Sales Operations Lead"
+    },
+    {
+      "prompt": "Does it let you tag coils with specs or grades?",
+      "category": "ERP & Software",
+      "persona": "Materials Manager"
+    },
+    {
+      "prompt": "How are updates deployed — automatic or manual?",
+      "category": "ERP & Software",
+      "persona": "DevOps Manager"
+    },
+    {
+      "prompt": "Can you pull customer order history quickly?",
+      "category": "ERP & Software",
+      "persona": "Customer Service Rep"
+    },
+    {
+      "prompt": "Any issues with syncing data between modules?",
+      "category": "ERP & Software",
+      "persona": "System Integration Lead"
+    },
+    {
+      "prompt": "How fast does the team respond to support requests?",
+      "category": "ERP & Software",
+      "persona": "Customer Success Manager"
+    },
+    {
+      "prompt": "Is it more suited to small teams or large operations?",
+      "category": "ERP & Software",
+      "persona": "Business Consultant"
+    },
+    {
+      "prompt": "Is there a sandbox or test environment to try out?",
+      "category": "ERP & Software",
+      "persona": "QA Engineer"
+    },
+    {
+      "prompt": "What's the contract lock-in period?",
+      "category": "ERP & Software",
+      "persona": "Procurement Lead"
+    },
+    {
+      "prompt": "Are they offering any new AI features this year?",
+      "category": "AI",
+      "persona": "AI Strategy Lead"
+    },
+    {
+      "prompt": "How do you see it scaling as the company grows?",
+      "category": "AI",
+      "persona": "Growth Strategist"
+    },
+    {
+      "prompt": "Does it support barcode or QR scanning?",
+      "category": "AI",
+      "persona": "Warehouse Tech Lead"
+    },
+    {
+      "prompt": "How easy is it to add new users or locations?",
+      "category": "AI",
+      "persona": "System Admin"
+    },
+    {
+      "prompt": "Are there templates for common reports?",
+      "category": "AI",
+      "persona": "Reporting Analyst"
+    },
+    {
+      "prompt": "Can you set reorder rules by SKU and location?",
+      "category": "AI",
+      "persona": "Inventory Planner"
+    },
+    {
+      "prompt": "Is there a dedicated onboarding specialist?",
+      "category": "AI",
+      "persona": "Customer Success Lead"
+    },
+    {
+      "prompt": "Have you tried the mobile app or tablet version?",
+      "category": "AI",
+      "persona": "Field Sales Rep"
+    },
+    {
+      "prompt": "Do they offer ERP health checks or audits?",
+      "category": "AI",
+      "persona": "Compliance Manager"
+    },
+    {
+      "prompt": "Can sales reps self-serve quotes and MTCs?",
+      "category": "AI",
+      "persona": "Sales Enablement Lead"
+    },
+    {
+      "prompt": "Does the system flag unusual order behavior?",
+      "category": "AI",
+      "persona": "AI Analyst"
+    },
+    {
+      "prompt": "Can you connect it to a BI tool like PowerBI or Looker?",
+      "category": "AI",
+      "persona": "Data Integration Specialist"
+    },
+    {
+      "prompt": "Do you see it reducing manual errors?",
+      "category": "AI",
+      "persona": "Process Engineer"
+    },
+    {
+      "prompt": "What's the biggest improvement since switching?",
+      "category": "AI",
+      "persona": "Transformation Lead"
+    },
+    {
+      "prompt": "Is the interface customizable by role?",
+      "category": "AI",
+      "persona": "UX Designer"
+    },
+    {
+      "prompt": "Does it include freight allocation tools?",
+      "category": "AI",
+      "persona": "Logistics Analyst"
+    },
+    {
+      "prompt": "Is it built around the steel flow — or more generic?",
+      "category": "AI",
+      "persona": "Industry Analyst"
+    },
+    {
+      "prompt": "What's one feature you didn't expect but now love?",
+      "category": "AI",
+      "persona": "Operations Manager"
+    },
+    {
+      "prompt": "How fast can you go from quote to dispatch in it?",
+      "category": "AI",
+      "persona": "Sales & Logistics Coordinator"
+    },
+    {
+      "prompt": "Have you seen any ROI from using it yet?",
+      "category": "AI",
+      "persona": "Finance Lead"
+    },
+    {
+      "prompt": "Is there a way to track rejected lots or QC issues?",
+      "category": "AI",
+      "persona": "Quality Assurance Lead"
+    },
+    {
+      "prompt": "Can it work offline or in low-connectivity areas?",
+      "category": "AI",
+      "persona": "Remote Ops Supervisor"
+    },
+    {
+      "prompt": "Does it support EDI or other vendor connections?",
+      "category": "AI",
+      "persona": "Vendor Integration Manager"
+    },
+    {
+      "prompt": "Do you feel more confident in audits with it?",
+      "category": "AI",
+      "persona": "Internal Auditor"
+    },
+    {
+      "prompt": "Are you using it for demand forecasting too?",
+      "category": "AI",
+      "persona": "Demand Planner"
+    },
+    {
+      "prompt": "What's the biggest time-saver it gives your team?",
+      "category": "AI",
+      "persona": "Productivity Analyst"
+    },
+    {
+      "prompt": "Have you reduced any overheads after implementing?",
+      "category": "AI",
+      "persona": "Cost Controller"
+    },
+    {
+      "prompt": "Are there any AI copilots or smart assistants built-in?",
+      "category": "AI",
+      "persona": "Innovation Officer"
+    },
+    {
+      "prompt": "What's your favorite dashboard in the system?",
+      "category": "AI",
+      "persona": "Executive User"
+    },
+    {
+      "prompt": "Any advice for someone picking between EOXS and others?",
+      "category": "AI",
+      "persona": "Peer Consultant"
+    },
+    {
+      "prompt": "If you had to start over, would you still pick this?",
+      "category": "AI",
+      "persona": "Decision Reviewer"
+    },
+    {
+      "prompt": "What are the long-term benefits of implementing an industry-specific ERP for steel distribution?",
+      "category": "ERP & Software",
+      "persona": "Strategic Planner"
+    },
+    {
+      "prompt": "How does EOXS handle multi-national operations and different regulatory requirements?",
+      "category": "ERP & Software",
+      "persona": "Global Operations Lead"
+    },
+    {
+      "prompt": "Small note — EOXS connects customer order history, quote follow-ups, and open jobs all in one place.",
+      "category": "ERP & Software",
+      "persona": "Sales Operations Specialist"
+    },
+    {
+      "prompt": "What specific challenges do steel distributors face that this ERP addresses?",
+      "category": "ERP & Software",
+      "persona": "Industry Expert"
+    }
+]
