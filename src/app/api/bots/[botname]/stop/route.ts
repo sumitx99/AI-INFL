@@ -5,12 +5,12 @@ import fs from 'fs';
 
 export async function POST(
   req: NextRequest,
-  context: { params: { botName: string } }
+  context: { params: { botname: string } }
 ) {
-  const { botName } = context.params;
+  const { botname } = context.params;
 
   // Validate bot name
-  if (!botName || !['chatgpt', 'perplexity'].includes(botName)) {
+  if (!botname || !['chatgpt', 'perplexity'].includes(botname)) {
     return NextResponse.json(
       { error: 'Invalid bot name. Must be "chatgpt" or "perplexity"' },
       { status: 400 }
@@ -19,11 +19,11 @@ export async function POST(
 
   try {
     // Find the PID file
-    const pidFile = path.join(process.cwd(), 'src', 'app', 'api', 'bots', botName, `${botName}.pid`);
+    const pidFile = path.join(process.cwd(), 'src', 'app', 'api', 'bots', botname, `${botname}.pid`);
 
     if (!fs.existsSync(pidFile)) {
       return NextResponse.json(
-        { error: `No running ${botName} bot found.` },
+        { error: `No running ${botname} bot found.` },
         { status: 404 }
       );
     }
@@ -45,18 +45,18 @@ export async function POST(
     } catch (killError) {
       console.error(`Failed to kill process with PID ${pid}:`, killError);
       return NextResponse.json(
-        { error: `Failed to stop ${botName} bot: ${(killError as Error).message}` },
+        { error: `Failed to stop ${botname} bot: ${(killError as Error).message}` },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
       status: 'stopped',
-      bot: botName,
+      bot: botname,
     });
 
   } catch (error) {
-    console.error(`Error stopping bot "${botName}":`, error);
+    console.error(`Error stopping bot "${botname}":`, error);
     return NextResponse.json(
       { error: 'Internal server error', details: (error as Error).message },
       { status: 500 }
