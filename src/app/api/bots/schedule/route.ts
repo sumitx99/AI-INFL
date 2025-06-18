@@ -6,7 +6,7 @@ import { toZonedTime, formatInTimeZone } from 'date-fns-tz';
 // Interface for scheduled tasks
 interface ScheduledTask {
   id: string;
-  botname: string;
+  botName: string;
   startTime: Date;
   endTime: Date;
   status: 'pending' | 'running' | 'completed' | 'cancelled' | 'failed';
@@ -19,11 +19,11 @@ const scheduledTasks: ScheduledTask[] = [];
 const IST_TIMEZONE = 'Asia/Kolkata';
 
 // Function to trigger bot start
-async function triggerBotStart(botname: string) {
-  console.log(`[Scheduler] Attempting to start bot: ${botname}`);
+async function triggerBotStart(botName: string) {
+  console.log(`[Scheduler] Attempting to start bot: ${botName}`);
   try {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9002';
-    const response = await fetch(`${appUrl}/api/bots/${botname}/start`, {
+    const response = await fetch(`${appUrl}/api/bots/${botName}/start`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -45,19 +45,19 @@ async function triggerBotStart(botname: string) {
       return;
     }
 
-    console.log(`[Scheduler] Successfully triggered start for ${botname}`, data);
+    console.log(`[Scheduler] Successfully triggered start for ${botName}`, data);
 
   } catch (error) {
-    console.error(`[Scheduler] Error triggering start for ${botname}:`, error);
+    console.error(`[Scheduler] Error triggering start for ${botName}:`, error);
   }
 }
 
 // Function to trigger bot stop
-async function triggerBotStop(botname: string) {
-  console.log(`[Scheduler] Attempting to stop bot: ${botname}`);
+async function triggerBotStop(botName: string) {
+  console.log(`[Scheduler] Attempting to stop bot: ${botName}`);
   try {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:9002';
-    const response = await fetch(`${appUrl}/api/bots/${botname}/stop`, {
+    const response = await fetch(`${appUrl}/api/bots/${botName}/stop`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -79,21 +79,21 @@ async function triggerBotStop(botname: string) {
       return;
     }
 
-    console.log(`[Scheduler] Successfully triggered stop for ${botname}`, data);
+    console.log(`[Scheduler] Successfully triggered stop for ${botName}`, data);
 
   } catch (error) {
-    console.error(`[Scheduler] Error triggering stop for ${botname}:`, error);
+    console.error(`[Scheduler] Error triggering stop for ${botName}:`, error);
   }
 }
 
 // POST handler for scheduling bot runs
 export async function POST(request: Request) {
   try {
-    const { botname, startTime: startTimeString, endTime: endTimeString, timezone } = await request.json();
+    const { botName, startTime: startTimeString, endTime: endTimeString, timezone } = await request.json();
 
-    console.log('[Scheduler] Received scheduling request:', { botname, startTimeString, endTimeString, timezone });
+    console.log('[Scheduler] Received scheduling request:', { botName, startTimeString, endTimeString, timezone });
 
-    if (!botname || !startTimeString || !endTimeString || timezone !== IST_TIMEZONE) {
+    if (!botName || !startTimeString || !endTimeString || timezone !== IST_TIMEZONE) {
       console.log('[Scheduler] Missing or invalid parameters');
       return NextResponse.json({ error: 'Invalid or missing parameters, or unsupported timezone' }, { status: 400 });
     }
@@ -132,7 +132,7 @@ export async function POST(request: Request) {
 
     const newTask: ScheduledTask = {
       id: `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      botname,
+      botName,
       startTime: startTimeUTC,
       endTime: endTimeUTC,
       status: 'pending',
@@ -147,13 +147,13 @@ export async function POST(request: Request) {
     // Schedule start job
     console.log('[Scheduler] Scheduling start job for', newTask.startTime);
     const startJob = scheduleJob(newTask.startTime, async () => {
-      console.log(`[Scheduler] Triggering START for task: ${newTask.id} (${newTask.botname}) at ${new Date().toISOString()}`);
+      console.log(`[Scheduler] Triggering START for task: ${newTask.id} (${newTask.botName}) at ${new Date().toISOString()}`);
       const taskIndex = scheduledTasks.findIndex(t => t.id === newTask.id);
       if (taskIndex > -1) {
         scheduledTasks[taskIndex].status = 'running';
       }
       console.log('[Scheduler] Calling triggerBotStart');
-      await triggerBotStart(newTask.botname);
+      await triggerBotStart(newTask.botName);
       console.log('[Scheduler] triggerBotStart completed');
     });
 
@@ -171,13 +171,13 @@ export async function POST(request: Request) {
     // Schedule end job
     console.log('[Scheduler] Scheduling end job for', newTask.endTime);
     const endJob = scheduleJob(newTask.endTime, async () => {
-      console.log(`[Scheduler] Triggering STOP for task: ${newTask.id} (${newTask.botname}) at ${new Date().toISOString()}`);
+      console.log(`[Scheduler] Triggering STOP for task: ${newTask.id} (${newTask.botName}) at ${new Date().toISOString()}`);
       const taskIndex = scheduledTasks.findIndex(t => t.id === newTask.id);
       if (taskIndex > -1) {
         scheduledTasks[taskIndex].status = 'completed';
       }
       console.log('[Scheduler] Calling triggerBotStop');
-      await triggerBotStop(newTask.botname);
+      await triggerBotStop(newTask.botName);
       console.log('[Scheduler] triggerBotStop completed');
     });
 
@@ -200,7 +200,7 @@ export async function POST(request: Request) {
 export async function GET() {
   return NextResponse.json(scheduledTasks.map(task => ({
     id: task.id,
-    botname: task.botname,
+    botName: task.botName,
     startTime: formatInTimeZone(task.startTime, IST_TIMEZONE, 'yyyy-MM-dd HH:mm:ss zzz'),
     endTime: formatInTimeZone(task.endTime, IST_TIMEZONE, 'yyyy-MM-dd HH:mm:ss zzz'),
     status: task.status,

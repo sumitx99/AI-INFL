@@ -6,15 +6,15 @@ import fs from 'fs';
 
 export async function POST(
   req: NextRequest,
-  context: { params: { botname: string } }
+  context: { params: { botName: string } }
 ) {
-  const botname = context.params.botname;
-  console.log('🐛 [start] params.botname =', JSON.stringify(botname));
+  const botName = context.params.botName;
+  console.log('🐛 [start] params.botName =', JSON.stringify(botName));
 
   // Validate bot name
-  if (!botname || !['chatgpt', 'perplexity'].includes(botname)) {
+  if (!botName || !['chatgpt', 'perplexity'].includes(botName)) {
     return NextResponse.json(
-      { error: 'Invalid bot name. Must be "chatgpt" or "perplexity"', received: botname },
+      { error: 'Invalid bot name. Must be "chatgpt" or "perplexity"', received: botName },
       { status: 400 }
     );
   }
@@ -27,7 +27,7 @@ export async function POST(
       'app',
       'api',
       'bots',
-      botname,
+      botName,
       'main.py'
     );
 
@@ -52,30 +52,30 @@ export async function POST(
       'app',
       'api',
       'bots',
-      botname,
-      `${botname}.pid`
+      botName,
+      `${botName}.pid`
     );
     fs.writeFileSync(pidFile, String(pythonProcess.pid), 'utf-8');
 
     // Handle process output
     pythonProcess.stdout?.on('data', (data) => {
-      console.log(`[Bot: ${botname}] stdout: ${data.toString()}`);
+      console.log(`[Bot: ${botName}] stdout: ${data.toString()}`);
     });
     pythonProcess.stderr?.on('data', (data) => {
-      console.error(`[Bot: ${botname}] stderr: ${data.toString()}`);
+      console.error(`[Bot: ${botName}] stderr: ${data.toString()}`);
     });
     pythonProcess.on('close', (code) => {
-      console.log(`[Bot: ${botname}] process exited with code ${code}`);
+      console.log(`[Bot: ${botName}] process exited with code ${code}`);
       if (fs.existsSync(pidFile)) fs.unlinkSync(pidFile);
     });
 
     return NextResponse.json({
       status: 'started',
-      bot: botname,
+      bot: botName,
       // pid: pythonProcess.pid,
     });
   } catch (error) {
-    console.error(`Error starting bot "${botname}":`, error);
+    console.error(`Error starting bot "${botName}":`, error);
     return NextResponse.json(
       { error: 'Failed to start bot', details: (error as Error).message },
       { status: 500 }
