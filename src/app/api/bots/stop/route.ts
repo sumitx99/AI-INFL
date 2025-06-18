@@ -1,37 +1,61 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import type { BotType } from '@/lib/types';
 import path from 'path';
 import fs from 'fs';
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest, { params }: { params: { botName: string } }) {
+  const botName = params.botName;
+
+  // Validate bot name
+  if (!botName || !['chatgpt', 'perplexity'].includes(botName)) {
+    return NextResponse.json(
+      { error: 'Invalid bot name. Must be "chatgpt" or "perplexity"' },
+      { status: 400 }
+    );
+  }
+
   try {
-    const { botType } = (await request.json()) as { botType: BotType };
-    
-    if (!botType || (botType !== 'chatgpt' && botType !== 'perplexity')) {
-      return NextResponse.json({ message: 'Invalid bot type provided' }, { status: 400 });
+    // Find the PID file
+    const pidFile = path.join(process.cwd(), 'src', 'app', 'api', 'bots', botName, `${botName}.pid`);
+
+    if (!fs.existsSync(pidFile)) {
+      return NextResponse.json(
+        { error: `No running ${botName} bot found.` },
+        { status: 404 }
+      );
     }
 
-    // Find the PID file
-    const pidFile = path.join(process.cwd(), 'src', 'app', 'api', 'bots', botType, `${botType}.pid`);
-    if (!fs.existsSync(pidFile)) {
-      return NextResponse.json({ message: `No running ${botType} bot found.` }, { status: 404 });
-    }
-    const pid = parseInt(fs.readFileSync(pidFile, 'utf-8'));
+    const pidData = fs.readFileSync(pidFile, 'utf-8');
+    const pid = parseInt(pidData.trim(), 10);
+
     if (isNaN(pid)) {
-      return NextResponse.json({ message: 'Invalid PID file.' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Invalid PID in file.' },
+        { status: 500 }
+      );
     }
 
     // Try to kill the process
     try {
       process.kill(pid);
-      fs.unlinkSync(pidFile);
-      return NextResponse.json({ message: `${botType} bot stopped successfully.` }, { status: 200 });
-    } catch (err) {
-      return NextResponse.json({ message: `Failed to stop ${botType} bot: ${(err as Error).message}` }, { status: 500 });
+      fs.unlinkSync(pidFile); // Remove the PID file after stopping
+      return NextResponse.json(
+        { success: true, message: `${botName} bot stopped successfully.` },
+        { status: 200 }
+      );
+    } catch (killError) {
+      console.error(`Failed to kill process with PID ${pid}:`, killError);
+      return NextResponse.json(
+        { error: `Failed to stop ${botName} bot: ${(killError as Error).message}` },
+        { status: 500 }
+      );
     }
+
   } catch (error) {
-    console.error('Error stopping bot:', error);
-    return NextResponse.json({ message: 'Error stopping bot', error: (error as Error).message }, { status: 500 });
+    console.error(`Error stopping bot "${botName}":`, error);
+    return NextResponse.json(
+      { error: 'Internal server error', details: (error as Error).message },
+      { status: 500 }
+    );
   }
 }
