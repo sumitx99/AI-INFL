@@ -3,8 +3,11 @@ import { NextResponse } from 'next/server';
 import path from 'path';
 import fs from 'fs';
 
-export async function POST(req: NextRequest, { params }: { params: { botName: string } }) {
-  const botName = params.botName;
+export async function POST(
+  req: NextRequest,
+  context: { params: { botName: string } }
+) {
+  const { botName } = context.params;
 
   // Validate bot name
   if (!botName || !['chatgpt', 'perplexity'].includes(botName)) {
@@ -39,10 +42,6 @@ export async function POST(req: NextRequest, { params }: { params: { botName: st
     try {
       process.kill(pid);
       fs.unlinkSync(pidFile); // Remove the PID file after stopping
-      return NextResponse.json(
-        { success: true, message: `${botName} bot stopped successfully.` },
-        { status: 200 }
-      );
     } catch (killError) {
       console.error(`Failed to kill process with PID ${pid}:`, killError);
       return NextResponse.json(
@@ -50,6 +49,11 @@ export async function POST(req: NextRequest, { params }: { params: { botName: st
         { status: 500 }
       );
     }
+
+    return NextResponse.json({
+      status: 'stopped',
+      bot: botName,
+    });
 
   } catch (error) {
     console.error(`Error stopping bot "${botName}":`, error);

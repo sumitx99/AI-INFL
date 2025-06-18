@@ -4,8 +4,11 @@ import { spawn, ChildProcess } from 'child_process';
 import path from 'path';
 import fs from 'fs';
 
-export async function POST(req: NextRequest, { params }: { params: { botName: string } }) {
-  const botName = params.botName;
+export async function POST(
+  req: NextRequest,
+  context: { params: { botName: string } }
+) {
+  const { botName } = context.params;
 
   // Validate bot name
   if (!botName || !['chatgpt', 'perplexity'].includes(botName)) {
@@ -52,9 +55,9 @@ export async function POST(req: NextRequest, { params }: { params: { botName: st
     });
 
     return NextResponse.json({
-      success: true,
-      message: `${botName} bot started successfully.`,
-      pid: pythonProcess.pid,
+      status: 'started',
+      bot: botName,
+      //pid: pythonProcess.pid,
     });
   } catch (error) {
     console.error(`Error starting bot "${botName}":`, error);

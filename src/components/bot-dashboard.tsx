@@ -165,7 +165,7 @@ export default function BotDashboard() {
 
     setIsScheduling(true);
     try {
-      const response = await fetch('/api/schedule', {
+      const response = await fetch('/api/bots/schedule', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
