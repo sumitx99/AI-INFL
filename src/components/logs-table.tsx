@@ -39,9 +39,6 @@ type SortKey = keyof LogEntry;
 export function LogsTable({ logs, isLoading, refreshLogs }: LogsTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'ascending' | 'descending' } | null>(null);
-  const [pivotData, setPivotData] = useState<any[] | null>(null);
-  const [pivotType, setPivotType] = useState<string | null>(null);
-  const [isPivotLoading, setIsPivotLoading] = useState(false);
 
   const filteredLogs = useMemo(() => {
     let searchableLogs = [...logs];
@@ -113,29 +110,6 @@ export function LogsTable({ logs, isLoading, refreshLogs }: LogsTableProps) {
     }
   };
 
-  const handleGeneratePivot = async (pivotType: 'perplexity') => {
-    setIsPivotLoading(true);
-    setPivotType(pivotType.charAt(0).toUpperCase() + pivotType.slice(1));
-    try {
-      const response = await fetch(`/api/pivot/${pivotType}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) throw new Error(`Failed to load ${pivotType} data`);
-
-      const result = await response.json();
-      setPivotData(result.data);
-    } catch (error) {
-      alert('Error loading pivot table: ' + (error as Error).message);
-      setPivotData(null);
-    } finally {
-      setIsPivotLoading(false);
-    }
-  };
-
   return (
     <div className="w-full max-w-4xl mt-8">
       <Card className="shadow-xl">
@@ -152,15 +126,21 @@ export function LogsTable({ logs, isLoading, refreshLogs }: LogsTableProps) {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Choose Pivot Type</AlertDialogTitle>
+                    <AlertDialogTitle>Download Pivot Table</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Select which type of pivot table to generate.
+                      Click below to download the Perplexity pivot table as Excel.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => handleGeneratePivot('perplexity')}>
-                      Perplexity-PIVOT
+                    <AlertDialogAction asChild>
+                      <a
+                        href="/api/bots/perplexity"
+                        download="perplexity-pivot.xlsx"
+                        className="inline-block w-full text-center"
+                      >
+                        Download Perplexity Pivot (Excel)
+                      </a>
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -237,57 +217,6 @@ export function LogsTable({ logs, isLoading, refreshLogs }: LogsTableProps) {
               </TableBody>
             </Table>
           </ScrollArea>
-
-          {/* Pivot Table Display */}
-          {pivotData && (
-            <div className="mt-8">
-              <h3 className="text-xl font-semibold mb-4">
-                {pivotType} Pivot Table ({pivotData.length} rows)
-              </h3>
-              <ScrollArea className="h-[400px] rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Prompt Text</TableHead>
-                      <TableHead>No</TableHead>
-                      <TableHead>Yes</TableHead>
-                      <TableHead>Total</TableHead>
-                      <TableHead>EOXS %</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {isPivotLoading ? (
-                      Array.from({ length: 5 }).map((_, i) => (
-                        <TableRow key={i}>
-                          <TableCell><Skeleton className="h-4" /></TableCell>
-                          <TableCell><Skeleton className="h-4" /></TableCell>
-                          <TableCell><Skeleton className="h-4" /></TableCell>
-                          <TableCell><Skeleton className="h-4" /></TableCell>
-                          <TableCell><Skeleton className="h-4" /></TableCell>
-                        </TableRow>
-                      ))
-                    ) : pivotData.length > 0 ? (
-                      pivotData.map((row, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{row["Prompt Text"]}</TableCell>
-                          <TableCell>{row.No}</TableCell>
-                          <TableCell>{row.Yes}</TableCell>
-                          <TableCell>{row.Total}</TableCell>
-                          <TableCell>{row.EOXS_Percentage}%</TableCell>
-                        </TableRow>
-                      ))
-                    ) : (
-                      <TableRow>
-                        <TableCell colSpan={5} className="text-center">
-                          No data found in pivot table
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </ScrollArea>
-            </div>
-          )}
         </CardContent>
       </Card>
     </div>
