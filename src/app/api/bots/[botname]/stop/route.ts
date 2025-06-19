@@ -2,7 +2,7 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import path from 'path';
 import fs from 'fs';
-
+import { spawnSync } from 'child_process';
 export async function POST(
   req: NextRequest,
   context: { params: { botName: string } }
@@ -49,7 +49,14 @@ export async function POST(
         { status: 500 }
       );
     }
-
+    if (botName === 'perplexity') {
+        const scriptDir = path.join(process.cwd(), 'src', 'app', 'api', 'bots', 'perplexity');
+        console.log('🔄 Running analyze_logs.py …');
+        spawnSync('python', ['analyze_logs.py'], {
+        cwd: scriptDir,
+        stdio: 'inherit'
+       });
+     }
     return NextResponse.json({
       status: 'stopped',
       bot: botName,

@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   Table,
   TableHeader,
@@ -12,10 +11,22 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowUpDown, ArrowUp, ArrowDown, Search, ListChecks, RefreshCw, Trash2 } from "lucide-react";
+import { ArrowUpDown, Search, ListChecks, RefreshCw, Trash2 } from "lucide-react";
 import type { LogEntry } from '@/lib/types';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface LogsTableProps {
   logs: LogEntry[];
@@ -28,6 +39,9 @@ type SortKey = keyof LogEntry;
 export function LogsTable({ logs, isLoading, refreshLogs }: LogsTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'ascending' | 'descending' } | null>(null);
+  const [pivotData, setPivotData] = useState<any[] | null>(null);
+  const [pivotType, setPivotType] = useState<string | null>(null);
+  const [isPivotLoading, setIsPivotLoading] = useState(false);
 
   const filteredLogs = useMemo(() => {
     let searchableLogs = [...logs];
@@ -70,9 +84,9 @@ export function LogsTable({ logs, isLoading, refreshLogs }: LogsTableProps) {
       return <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />;
     }
     return sortConfig.direction === 'ascending' ? (
-      <ArrowUp className="ml-2 h-4 w-4" />
+      <ArrowUpDown className="ml-2 h-4 w-4" />
     ) : (
-      <ArrowDown className="ml-2 h-4 w-4" />
+      <ArrowUpDown className="ml-2 h-4 w-4" />
     );
   };
 
@@ -83,7 +97,7 @@ export function LogsTable({ logs, isLoading, refreshLogs }: LogsTableProps) {
     { key: 'endTime', label: 'End Time', sortable: true },
     { key: 'duration', label: 'Duration', sortable: true },
   ];
-  
+
   const formatDisplayTime = (isoString: string) => {
     return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
@@ -99,6 +113,29 @@ export function LogsTable({ logs, isLoading, refreshLogs }: LogsTableProps) {
     }
   };
 
+  const handleGeneratePivot = async (pivotType: 'perplexity') => {
+    setIsPivotLoading(true);
+    setPivotType(pivotType.charAt(0).toUpperCase() + pivotType.slice(1));
+    try {
+      const response = await fetch(`/api/pivot/${pivotType}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) throw new Error(`Failed to load ${pivotType} data`);
+
+      const result = await response.json();
+      setPivotData(result.data);
+    } catch (error) {
+      alert('Error loading pivot table: ' + (error as Error).message);
+      setPivotData(null);
+    } finally {
+      setIsPivotLoading(false);
+    }
+  };
+
   return (
     <div className="w-full max-w-4xl mt-8">
       <Card className="shadow-xl">
@@ -109,6 +146,25 @@ export function LogsTable({ logs, isLoading, refreshLogs }: LogsTableProps) {
               Session Logs
             </div>
             <div className="flex gap-2">
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outline">PIVOT</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Choose Pivot Type</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Select which type of pivot table to generate.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => handleGeneratePivot('perplexity')}>
+                      Perplexity-PIVOT
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
               <Button onClick={refreshLogs} variant="outline" size="sm" aria-label="Refresh logs">
                 <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
               </Button>
@@ -181,12 +237,59 @@ export function LogsTable({ logs, isLoading, refreshLogs }: LogsTableProps) {
               </TableBody>
             </Table>
           </ScrollArea>
+
+          {/* Pivot Table Display */}
+          {pivotData && (
+            <div className="mt-8">
+              <h3 className="text-xl font-semibold mb-4">
+                {pivotType} Pivot Table ({pivotData.length} rows)
+              </h3>
+              <ScrollArea className="h-[400px] rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Prompt Text</TableHead>
+                      <TableHead>No</TableHead>
+                      <TableHead>Yes</TableHead>
+                      <TableHead>Total</TableHead>
+                      <TableHead>EOXS %</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {isPivotLoading ? (
+                      Array.from({ length: 5 }).map((_, i) => (
+                        <TableRow key={i}>
+                          <TableCell><Skeleton className="h-4" /></TableCell>
+                          <TableCell><Skeleton className="h-4" /></TableCell>
+                          <TableCell><Skeleton className="h-4" /></TableCell>
+                          <TableCell><Skeleton className="h-4" /></TableCell>
+                          <TableCell><Skeleton className="h-4" /></TableCell>
+                        </TableRow>
+                      ))
+                    ) : pivotData.length > 0 ? (
+                      pivotData.map((row, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{row["Prompt Text"]}</TableCell>
+                          <TableCell>{row.No}</TableCell>
+                          <TableCell>{row.Yes}</TableCell>
+                          <TableCell>{row.Total}</TableCell>
+                          <TableCell>{row.EOXS_Percentage}%</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={5} className="text-center">
+                          No data found in pivot table
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </ScrollArea>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
   );
 }
-
-// Dummy Card components if not globally available or for local structure.
-// Assuming Card, CardHeader, CardTitle, CardContent are from "@/components/ui/card"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

@@ -1,11 +1,17 @@
-import pandas as pd
+import os
 import re
+import pandas as pd
 import openpyxl
 
 # --- Configuration for CSV Column Names ---
 prompt_column_name = 'prompt'
 response_column_name = 'response'
 # -----------------------------------------
+
+# Build paths relative to this file
+BOT_DIR  = os.path.dirname(__file__)
+log_path = os.path.join(BOT_DIR, 'logs', 'logs.csv')
+out_path = os.path.join(BOT_DIR, 'prompt_analysis.xlsx')
 
 def clean_text(text):
     if pd.isna(text):
@@ -22,7 +28,6 @@ def clean_text(text):
     return text
 
 # Read the logs.csv file
-log_path = 'src/app/api/bots/perplexity/logs/logs.csv'
 df = pd.read_csv(log_path)
 
 # Only keep relevant columns
@@ -30,75 +35,49 @@ if 'prompt' not in df.columns or 'eoxs_detected' not in df.columns:
     raise ValueError('logs.csv must contain prompt and eoxs_detected columns')
 
 def eoxs_yes(val):
-    return str(val).strip().lower() == 'true' or str(val).strip() == '1'
+    return str(val).strip().lower() in ('true', '1')
 
 def eoxs_no(val):
-    return str(val).strip().lower() == 'false' or str(val).strip() == '0'
+    return str(val).strip().lower() in ('false', '0')
 
-# Group by prompt and aggregate
-result = []
-for prompt, group in df.groupby('prompt'):
-    yes = group['eoxs_detected'].apply(eoxs_yes).sum()
-    no = group['eoxs_detected'].apply(eoxs_no).sum()
-    total = len(group)
-    percent = (yes / total * 100) if total > 0 else 0
-    result.append({
-        'prompt': prompt,
-        'No': no,
-        'Yes': yes,
-        'Total': total,
-        'EOXS_Percentage': round(percent, 2)
-    })
-
-# Sort by prompt for consistency
-result = sorted(result, key=lambda x: x['prompt'])
-
-# Write to Excel
-out_path = 'src/app/api/bots/perplexity/prompt_analysis.xlsx'
-df_out = pd.DataFrame(result)
-df_out.to_excel(out_path, index=False)
-print(f'Wrote EOXS prompt analysis to {out_path}')
-
-# Apply cleaning to the prompt and response columns
-df[prompt_column_name] = df[prompt_column_name].apply(clean_text)
-df[response_column_name] = df[response_column_name].apply(clean_text)
-
-# Function to check if EOXS is in the response
 def check_eoxs(response):
     if pd.isna(response):
         return 'No'
-    return 'Yes' if 'EOXS' in str(response) else 'No'
+    return 'Yes' if 'EOXS' in str(response).upper() else 'No'
+
+# Clean the prompt & response columns
+df[prompt_column_name]  = df[prompt_column_name].apply(clean_text)
+df[response_column_name] = df[response_column_name].apply(clean_text)
 
 # Create a new column for EOXS presence
 df['Has_EOXS'] = df[response_column_name].apply(check_eoxs)
 
-# Create pivot table
+# Build the pivot table
 pivot_table = pd.pivot_table(
     df,
-    values=response_column_name,  # This will be used for counting
-    index=prompt_column_name,     # Group by prompt
-    columns='Has_EOXS', # Split by EOXS presence
-    aggfunc='count',    # Count occurrences
-    fill_value=0        # Fill missing values with 0
+    values=response_column_name,   # just uses the column for counting
+    index=prompt_column_name,      # group by prompt
+    columns='Has_EOXS',            # split by Yes/No
+    aggfunc='count',               # count occurrences
+    fill_value=0
 )
 
-# Add a total column
+# Add totals and percentage
 pivot_table['Total'] = pivot_table.sum(axis=1)
+pivot_table['EOXS_Percentage'] = (
+    pivot_table['Yes'] / pivot_table['Total'] * 100
+).round(2)
 
-# Calculate percentage of Yes responses
-pivot_table['EOXS_Percentage'] = (pivot_table['Yes'] / pivot_table['Total'] * 100).round(2)
-
-# Save to Excel
-with pd.ExcelWriter('prompt_analysis.xlsx', engine='openpyxl') as writer:
+# Write out a single Excel file next to this script
+with pd.ExcelWriter(out_path, engine='openpyxl') as writer:
     pivot_table.to_excel(writer, sheet_name='Prompt Analysis')
-    
-    # Auto-adjust column widths
     worksheet = writer.sheets['Prompt Analysis']
-    for idx, col in enumerate(pivot_table.columns):
+    # Auto-adjust widths
+    for idx, col in enumerate(pivot_table.columns, start=1):
         max_length = max(
-            pivot_table[col].astype(str).apply(len).max(),
+            pivot_table[col].astype(str).map(len).max(),
             len(str(col))
         )
-        worksheet.column_dimensions[chr(65 + idx + 1)].width = max_length + 2
+        worksheet.column_dimensions[openpyxl.utils.get_column_letter(idx+1)].width = max_length + 2
 
-print("Analysis complete! Check prompt_analysis.xlsx for results.") 
+print(f"Wrote EOXS prompt analysis to {out_path}")
