@@ -13,10 +13,30 @@ import openpyxl
 from openpyxl.styles import PatternFill
 from time import sleep
 import io
+import signal
+import atexit
 
 # Set up UTF-8 encoding for stdout
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# Global driver for cleanup
+driver = None
+
+def _cleanup(signum=None, frame=None):
+    global driver
+    if driver:
+        try:
+            print("🔚 Received shutdown signal, closing browser…")
+            driver.quit()
+        except Exception:
+            pass
+    sys.exit(0)
+
+# Register cleanup handlers
+signal.signal(signal.SIGTERM, _cleanup)
+signal.signal(signal.SIGINT, _cleanup)
+atexit.register(_cleanup)
 
 # === CONFIGURATION ===
 PLATFORM_URL = "https://chatgpt.com/"  # Direct to chat interface

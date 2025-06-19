@@ -10,10 +10,30 @@ import io
 from datetime import datetime
 from bs4 import BeautifulSoup
 from DrissionPage import ChromiumPage
+import signal
+import atexit
 
 # Set up UTF-8 encoding for stdout
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# Global driver for cleanup
+driver = None
+
+def _cleanup(signum=None, frame=None):
+    global driver
+    if driver:
+        try:
+            print("🔚 Received shutdown signal, closing browser…")
+            driver.quit()
+        except Exception:
+            pass
+    sys.exit(0)
+
+# Register cleanup handlers
+signal.signal(signal.SIGTERM, _cleanup)
+signal.signal(signal.SIGINT, _cleanup)
+atexit.register(_cleanup)
 
 # Import the new flow logic
 from perplexity_flow import run_perplexity_flow
@@ -404,7 +424,13 @@ if __name__ == "__main__":
 
     try:
         run_perplexity_flow(driver, prompts, PLATFORM_URL, LOG_FILE, EOXS_PARAGRAPH, verify_vpn_connection, log_session)
-
+        # Now convert logs.csv → prompt_analysis.xlsx
+        from .analyze_logs import convert_logs_to_excel
+        print("🔄 Converting logs.csv → prompt_analysis.xlsx …")
+        convert_logs_to_excel(
+            csv_path=LOG_FILE,
+            output_path=os.path.join(BOT_DIR, 'prompt_analysis.xlsx')
+        )
     except KeyboardInterrupt:
         print("\n⚠️ Script stopped by user")
     except Exception as e:
