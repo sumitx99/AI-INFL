@@ -15,10 +15,6 @@ import atexit
 
 
 # === IMPORTS THAT NEED OUR PATHS DEFINED FIRST ===
-# Get the absolute path to this bot's directory
-BOT_DIR = os.path.dirname(os.path.abspath(__file__))
-LOG_FILE = os.path.join(BOT_DIR, 'logs', 'logs.csv')
-EXCEL_FILE = os.path.join(BOT_DIR, 'prompt_analysis.xlsx')
 
 # Set up UTF-8 encoding for stdout
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -441,5 +437,3 @@ if __name__ == "__main__":
         driver.quit()
         # Disconnect PIA VPN
         disconnect_vpn()
-        print(f"🔄 Converting {LOG_FILE} → {EXCEL_FILE} …")
-        convert_logs_to_excel(csv_path=LOG_FILE, output_path=EXCEL_FILE)

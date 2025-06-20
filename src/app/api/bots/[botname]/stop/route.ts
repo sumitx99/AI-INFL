@@ -3,11 +3,13 @@ import { NextResponse } from 'next/server';
 import path from 'path';
 import fs from 'fs';
 import { spawnSync } from 'child_process';
+
 export async function POST(
   req: NextRequest,
-  context: { params: { botName: string } }
+  context: { params: Promise<{ botName: string }> }
 ) {
-  const { botName } = context.params;
+  const params = await context.params;
+  const { botName } = params;
 
   // Validate bot name
   if (!botName || !['chatgpt', 'perplexity'].includes(botName)) {
@@ -19,7 +21,15 @@ export async function POST(
 
   try {
     // Find the PID file
-    const pidFile = path.join(process.cwd(), 'src', 'app', 'api', 'bots', botName, `${botName}.pid`);
+    const pidFile = path.join(
+      process.cwd(),
+      'src',
+      'app',
+      'api',
+      'bots',
+      botName,
+      `${botName}.pid`
+    );
 
     if (!fs.existsSync(pidFile)) {
       return NextResponse.json(
@@ -49,14 +59,26 @@ export async function POST(
         { status: 500 }
       );
     }
+
+    // Run analysis script only for perplexity bot
     if (botName === 'perplexity') {
-        const scriptDir = path.join(process.cwd(), 'src', 'app', 'api', 'bots', 'perplexity');
-        console.log('🔄 Running analyze_logs.py …');
-        spawnSync('python', ['analyze_logs.py'], {
+      const scriptDir = path.join(process.cwd(), 'src', 'app', 'api', 'bots', 'perplexity');
+      console.log('🔄 Running analyze_logs.py …');
+      const result = spawnSync('python', ['analyze_logs.py'], {
         cwd: scriptDir,
-        stdio: 'inherit'
-       });
-     }
+        stdio: 'pipe'
+      });
+
+      if (result.status !== 0) {
+        console.error('Python script failed:', result.stderr.toString());
+        return NextResponse.json(
+          { warning: 'Log analysis script failed.', error: result.stderr.toString() },
+          { status: 500 }
+        );
+      }
+      console.log('✅ Log analysis completed:', result.stdout.toString());
+    }
+
     return NextResponse.json({
       status: 'stopped',
       bot: botName,

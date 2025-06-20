@@ -77,21 +77,33 @@ export default function BotDashboard() {
     if (isBotRunning || isStarting) return;
     setIsStarting(true);
     try {
-      const response = await fetch('/api/bots/start', {
+      const response = await fetch(`/api/bots/${botType}/start`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ botType }),
       });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Failed to start ${botType} bot`);
+  
+      let data;
+      const contentType = response.headers.get('content-type');
+  
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(`Non-JSON response received: ${text.slice(0, 100)}...`);
       }
+  
+      if (!response.ok) {
+        throw new Error(data.message || `Failed to start ${botType} bot`);
+      }
+  
       setSelectedBot(botType);
       setIsBotRunning(true);
       const now = Date.now();
       setStartTime(now);
       setElapsedTime(0);
       setIsModalOpen(false);
+  
     } catch (error) {
       console.error("Start bot error:", error);
       toast({
@@ -109,34 +121,55 @@ export default function BotDashboard() {
     if (!isBotRunning || !selectedBot || !startTime || isStopping) return;
     setIsStopping(true);
     const endTime = Date.now();
+  
     try {
-      const stopResponse = await fetch('/api/bots/stop', {
+      // Stop the bot via updated dynamic route
+      const stopResponse = await fetch(`/api/bots/${selectedBot}/stop`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ botType: selectedBot }),
       });
-
-      if (!stopResponse.ok) {
-        const errorData = await stopResponse.json();
-        throw new Error(errorData.message || `Failed to stop ${selectedBot} bot`);
+  
+      let stopData;
+      const contentType = stopResponse.headers.get('content-type');
+  
+      if (contentType && contentType.includes('application/json')) {
+        stopData = await stopResponse.json();
+      } else {
+        const text = await stopResponse.text();
+        throw new Error(`Non-JSON response received: ${text.slice(0, 100)}...`);
       }
-
-      const logResponse = await fetch('/api/logs', {
+  
+      if (!stopResponse.ok) {
+        throw new Error(stopData.message || `Failed to stop ${selectedBot} bot`);
+      }
+  
+      // Log session via updated dynamic route
+      const logResponse = await fetch(`/api/bots/${selectedBot}/logs`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          botType: selectedBot,
-          startTime: startTime,
-          endTime: endTime,
+          startTime,
+          endTime,
         }),
       });
-
-      if (!logResponse.ok) {
-        const errorData = await logResponse.json();
-        throw new Error(errorData.message || 'Failed to log session');
+  
+      let logData;
+      const logContentType = logResponse.headers.get('content-type');
+  
+      if (logContentType && logContentType.includes('application/json')) {
+        logData = await logResponse.json();
+      } else {
+        const text = await logResponse.text();
+        throw new Error(`Non-JSON log response: ${text.slice(0, 100)}...`);
       }
-
+  
+      if (!logResponse.ok) {
+        throw new Error(logData.message || 'Failed to log session');
+      }
+  
       fetchLogs();
+  
     } catch (error) {
       console.error("Stop bot / log error:", error);
       toast({

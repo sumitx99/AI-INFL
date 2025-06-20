@@ -6,9 +6,11 @@ import fs from 'fs';
 
 export async function POST(
   req: NextRequest,
-  context: { params: { botName: string } }
+  context: { params: Promise<{ botName: string }> } // Note: params is a Promise
 ) {
-  const botName = context.params.botName;
+  const params = await context.params; // ✅ Await the params
+  const botName = params.botName; // ✅ Now safe to access
+
   console.log('🐛 [start] params.botName =', JSON.stringify(botName));
 
   // Validate bot name
@@ -72,7 +74,6 @@ export async function POST(
     return NextResponse.json({
       status: 'started',
       bot: botName,
-      // pid: pythonProcess.pid,
     });
   } catch (error) {
     console.error(`Error starting bot "${botName}":`, error);
