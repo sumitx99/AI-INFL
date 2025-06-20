@@ -50,8 +50,8 @@ PROMPT_FILES = {
 
 # Get the absolute path to the bot's directory
 BOT_DIR = os.path.dirname(os.path.abspath(__file__))
-LOG_FILE = os.path.join(BOT_DIR, 'logs', 'logs.csv')
-PROMPT_RUN_COUNT_FILE = os.path.join(BOT_DIR, 'logs', 'prompt_run_count.json')
+LOG_FILE = os.path.join(BOT_DIR, 'src', 'app', 'api', 'bots', 'chatgpt', 'logs', 'logs.csv')
+PROMPT_RUN_COUNT_FILE = os.path.join(BOT_DIR, 'src', 'app', 'api', 'bots', 'chatgpt', 'prompt_run_count.json')
 
 # === VPN CONFIGURATION ===
 VPN_CONFIG = {
