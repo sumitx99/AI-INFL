@@ -123,53 +123,36 @@ export default function BotDashboard() {
     const endTime = Date.now();
   
     try {
-      // Stop the bot via updated dynamic route
+      // Stop the bot
       const stopResponse = await fetch(`/api/bots/${selectedBot}/stop`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ botType: selectedBot }),
       });
   
-      let stopData;
-      const contentType = stopResponse.headers.get('content-type');
-  
-      if (contentType && contentType.includes('application/json')) {
-        stopData = await stopResponse.json();
-      } else {
-        const text = await stopResponse.text();
-        throw new Error(`Non-JSON response received: ${text.slice(0, 100)}...`);
-      }
-  
       if (!stopResponse.ok) {
+        const stopData = await stopResponse.json();
         throw new Error(stopData.message || `Failed to stop ${selectedBot} bot`);
       }
   
-      // Log session via updated dynamic route
-      const logResponse = await fetch(`/api/bots/${selectedBot}/logs`, {
+      // Log session to global logs endpoint
+      const logResponse = await fetch('/api/logs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          startTime,
-          endTime,
+          botType: selectedBot,
+          startTime: new Date(startTime).toISOString(),
+          endTime: new Date(endTime).toISOString(),
+          durationMs: endTime - startTime,
         }),
       });
   
-      let logData;
-      const logContentType = logResponse.headers.get('content-type');
-  
-      if (logContentType && logContentType.includes('application/json')) {
-        logData = await logResponse.json();
-      } else {
-        const text = await logResponse.text();
-        throw new Error(`Non-JSON log response: ${text.slice(0, 100)}...`);
-      }
-  
       if (!logResponse.ok) {
-        throw new Error(logData.message || 'Failed to log session');
+        const logData = await logResponse.json();
+        throw new Error(logData.message || 'Failed to save session log');
       }
   
-      fetchLogs();
-  
+      fetchLogs(); // Refresh UI
     } catch (error) {
       console.error("Stop bot / log error:", error);
       toast({

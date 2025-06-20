@@ -137,9 +137,18 @@ export function LogsTable({ logs, isLoading, refreshLogs }: LogsTableProps) {
                       <a
                         href="/api/bots/perplexity"
                         download="perplexity-pivot.xlsx"
-                        className="inline-block w-full text-center"
+                        className="inline-block w-35 text-center"
                       >
-                        Download Perplexity Pivot (Excel)
+                        Perplexity Pivot (Excel)
+                      </a>
+                    </AlertDialogAction>
+                    <AlertDialogAction asChild>
+                      <a
+                        href="/api/bots/chatgpt"
+                        download="chatgpt-pivot.xlsx"
+                        className="inline-block w-45 text-center"
+                      >
+                        Chatgpt Pivot (Excel)
                       </a>
                     </AlertDialogAction>
                   </AlertDialogFooter>
