@@ -31,7 +31,8 @@ def _cleanup(signum=None, frame=None):
             driver.quit()
         except Exception:
             pass
-    sys.exit(0)
+    if signum is not None:
+        sys.exit(0)
 
 # Register cleanup handlers
 signal.signal(signal.SIGTERM, _cleanup)
@@ -53,7 +54,7 @@ LOG_FILE = os.path.join(BOT_DIR, 'logs', 'logs.csv')
 # === VPN CONFIGURATION ===
 VPN_CONFIG = {
     'check_ip_url': 'https://api.ipify.org?format=json',
-    'region': 'US Texas',  # PIA region name for US Texas
+    'region': 'US California',  # PIA region name for US Texas
     'vpn_command': r'C:\Program Files\Private Internet Access\piactl.exe',
     'max_retries': 3,
     'retry_delay': 10

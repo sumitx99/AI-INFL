@@ -1,5 +1,6 @@
 import os
 import re
+import sys
 import pandas as pd
 import openpyxl
 
@@ -12,6 +13,14 @@ response_column_name = 'response'
 BOT_DIR  = os.path.dirname(__file__)
 log_path = os.path.join(BOT_DIR, 'logs', 'logs.csv')
 out_path = os.path.join(BOT_DIR, 'prompt_analysis.xlsx')
+
+# ——— ensure logs.csv exists and isn’t empty ———
+if not os.path.exists(log_path):
+    print(f"[ERROR] No log file found at {log_path}. Skipping analysis.")
+    sys.exit(1)
+if os.stat(log_path).st_size == 0:
+    print(f"[ERROR] Log file at {log_path} is empty. Skipping analysis.")
+    sys.exit(1)
 
 def clean_text(text):
     if pd.isna(text):
