@@ -21,15 +21,13 @@ export async function POST(
 
   try {
     // Find the PID file
-    const pidFile = path.join(
+    const scriptDir = path.join(
       process.cwd(),
-      'src',
-      'app',
-      'api',
       'bots',
-      botName,
-      `${botName}.pid`
+      botName
     );
+    const pidFile = path.join(scriptDir, `${botName}.pid`);
+    
 
     if (!fs.existsSync(pidFile)) {
       return NextResponse.json(
@@ -62,7 +60,7 @@ export async function POST(
 
     // Run analysis script only for perplexity bot
     if (botName === 'perplexity') {
-      const scriptDir = path.join(process.cwd(), 'src', 'app', 'api', 'bots', 'perplexity');
+      const scriptDir = path.join(process.cwd(), 'bots', 'perplexity');
       console.log('🔄 Running analyze_logs.py …');
       const result = spawnSync('python', ['analyze_logs.py'], {
         cwd: scriptDir,

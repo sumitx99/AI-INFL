@@ -9,9 +9,6 @@ export async function GET() {
     // 1) Locate the Excel pivot file
     const xlsxPath = path.join(
       process.cwd(),
-      'src',
-      'app',
-      'api',
       'bots',
       'perplexity',
       'prompt_analysis.xlsx'
@@ -80,7 +77,7 @@ export async function GET() {
       status: 200,
       headers: {
         'Content-Type': 'text/csv',
-        'Content-Disposition': 'attachment; filename="pivot_summary.csv"',
+        'Content-Disposition': 'attachment; filename="perplexity_pivot_summary.csv"',
       },
     });
   } catch (err) {

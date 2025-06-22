@@ -1,3 +1,4 @@
-# Add Python package dependencies here, e.g.:
-# perplexity-ai
-# pandas
+pandas>=1.5.0
+beautifulsoup4>=4.9.0
+DrissionPage>=4.0.0
+openpyxl>=3.0.0

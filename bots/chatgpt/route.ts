@@ -5,9 +5,6 @@ import { promises as fs } from 'fs';
 async function loadRows() {
   const csvPath = path.join(
     process.cwd(),
-    'src',
-    'app',
-    'api',
     'bots',
     'chatgpt',
     'logs',

@@ -1,3 +1,5 @@
+// src/app/api/bots/[botName]/start/route.ts
+
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { spawn, ChildProcess } from 'child_process';
@@ -6,11 +8,9 @@ import fs from 'fs';
 
 export async function POST(
   req: NextRequest,
-  context: { params: Promise<{ botName: string }> } // Note: params is a Promise
+  context: { params: Promise<{ botName: string }> }
 ) {
-  const params = await context.params; // ✅ Await the params
-  const botName = params.botName; // ✅ Now safe to access
-
+  const { botName } = await context.params; 
   console.log('🐛 [start] params.botName =', JSON.stringify(botName));
 
   // Validate bot name
@@ -22,18 +22,17 @@ export async function POST(
   }
 
   try {
-    // Determine the path to the appropriate main.py file
-    const scriptPath = path.join(
+    // Base folder for this bot
+    const scriptDir = path.join(
       process.cwd(),
-      'src',
-      'app',
-      'api',
       'bots',
-      botName,
-      'main.py'
+      botName
     );
 
-    // Check if main.py exists
+    // Path to the Python entrypoint
+    const scriptPath = path.join(scriptDir, 'main.py');
+
+    // Check that main.py actually exists
     if (!fs.existsSync(scriptPath)) {
       return NextResponse.json(
         { error: `Bot script not found: ${scriptPath}` },
@@ -41,25 +40,17 @@ export async function POST(
       );
     }
 
-    // Spawn a new process to run the Python script
+    // Spawn the bot process
     const pythonProcess: ChildProcess = spawn('python', [scriptPath], {
       stdio: 'pipe',
       shell: true,
     });
 
-    // Store the PID in a file for later termination
-    const pidFile = path.join(
-      process.cwd(),
-      'src',
-      'app',
-      'api',
-      'bots',
-      botName,
-      `${botName}.pid`
-    );
+    // Write its PID into a file alongside the script
+    const pidFile = path.join(scriptDir, `${botName}.pid`);
     fs.writeFileSync(pidFile, String(pythonProcess.pid), 'utf-8');
 
-    // Handle process output
+    // Log output for debugging
     pythonProcess.stdout?.on('data', (data) => {
       console.log(`[Bot: ${botName}] stdout: ${data.toString()}`);
     });
@@ -68,6 +59,7 @@ export async function POST(
     });
     pythonProcess.on('close', (code) => {
       console.log(`[Bot: ${botName}] process exited with code ${code}`);
+      // Clean up the PID file when the process ends
       if (fs.existsSync(pidFile)) fs.unlinkSync(pidFile);
     });
 

@@ -2,6 +2,42 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import csvtojson from 'csvtojson';
+
+// Helper function to get the log file path
+function getLogFilePath(botName: string): string {
+  const scriptDir = path.join(process.cwd(), 'bots', botName);
+  return path.join(scriptDir, 'logs', 'logs.csv');
+}
+
+// GET function to return all logs for a bot
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ botName: string }> }
+) {
+  const params = await context.params;
+  const { botName } = params;
+
+  // Validate bot name
+  if (!botName || !['chatgpt', 'perplexity'].includes(botName)) {
+    return NextResponse.json({ error: 'Invalid bot name' }, { status: 400 });
+  }
+
+  const logFilePath = getLogFilePath(botName);
+
+  if (!fs.existsSync(logFilePath)) {
+     // Return an empty array and 200 status if file not found, as it's not an error
+    return NextResponse.json([], { status: 200 });
+  }
+
+  try {
+    const logs = await csvtojson().fromFile(logFilePath);
+    return NextResponse.json(logs, { status: 200 });
+  } catch (error) {
+    console.error(`Error reading log file ${logFilePath}:`, error);
+    return NextResponse.json({ error: 'Error reading log file' }, { status: 500 });
+  }
+}
 
 export async function POST(
   req: NextRequest,
@@ -30,19 +66,11 @@ export async function POST(
     return NextResponse.json({ error: 'Missing start or end time' }, { status: 400 });
   }
 
-  // Path to CSV file
-  const logFilePath = path.join(
-    process.cwd(),
-    'src',
-    'app',
-    'api',
-    'bots',
-    botName,
-    'logs',
-    'logs.csv'
-  );
+  // Path to CSV file - using helper function now
+  const logFilePath  = getLogFilePath(botName);
 
   if (!fs.existsSync(logFilePath)) {
+    // Also return 404 for POST if file not found, as a time range on a non-existent file is invalid
     return NextResponse.json({ error: 'Log file not found' }, { status: 404 });
   }
 
@@ -75,5 +103,5 @@ export async function POST(
     })
     .filter(Boolean);
 
-  return NextResponse.json({ logs: filteredLogs });
+  return NextResponse.json({ logs: filteredLogs }, { status: 200 });
 }
