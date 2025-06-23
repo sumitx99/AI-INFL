@@ -144,7 +144,7 @@ export function LogsTable({ logs, isLoading, refreshLogs }: LogsTableProps) {
                     </AlertDialogAction>
                     <AlertDialogAction asChild>
                       <a
-                        href="/api/bots/chatgpt"
+                        href="/bots/chatgpt"
                         download="chatgpt-pivot.xlsx"
                         className="inline-block w-45 text-center"
                       >

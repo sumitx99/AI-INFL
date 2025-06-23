@@ -25,6 +25,8 @@ export async function POST(
     // Base folder for this bot
     const scriptDir = path.join(
       process.cwd(),
+      'src',
+      'app',
       'bots',
       botName
     );

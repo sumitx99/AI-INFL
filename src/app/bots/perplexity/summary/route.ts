@@ -9,6 +9,8 @@ export async function GET() {
     // 1) Locate the Excel pivot file
     const xlsxPath = path.join(
       process.cwd(),
+      'src',
+      'app',
       'bots',
       'perplexity',
       'prompt_analysis.xlsx'

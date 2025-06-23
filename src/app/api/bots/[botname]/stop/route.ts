@@ -23,6 +23,8 @@ export async function POST(
     // Find the PID file
     const scriptDir = path.join(
       process.cwd(),
+      'src',
+      'app',
       'bots',
       botName
     );
@@ -60,7 +62,7 @@ export async function POST(
 
     // Run analysis script only for perplexity bot
     if (botName === 'perplexity') {
-      const scriptDir = path.join(process.cwd(), 'bots', 'perplexity');
+      const scriptDir = path.join(process.cwd(), 'src', 'app', 'bots', 'perplexity');
       console.log('🔄 Running analyze_logs.py …');
       const result = spawnSync('python', ['analyze_logs.py'], {
         cwd: scriptDir,
