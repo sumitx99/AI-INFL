@@ -29,7 +29,6 @@ import type { LogEntry } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface LogsTableProps {
-  botType: string;   
   logs: LogEntry[];
   isLoading: boolean;
   refreshLogs: () => void;
@@ -37,7 +36,7 @@ interface LogsTableProps {
 
 type SortKey = keyof LogEntry;
 
-export function LogsTable({ botType, logs, isLoading, refreshLogs }: LogsTableProps) {
+export function LogsTable({ logs, isLoading, refreshLogs }: LogsTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: 'ascending' | 'descending' } | null>(null);
 
@@ -103,7 +102,7 @@ export function LogsTable({ botType, logs, isLoading, refreshLogs }: LogsTablePr
   const handleDeleteLogs = async () => {
     if (!window.confirm('Are you sure you want to delete all session logs?')) return;
     try {
-      const res = await fetch(`/api/bots/${botType}/logs`, { method: 'DELETE' })
+      const res = await fetch('/api/logs', { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete logs');
       refreshLogs();
     } catch (err) {
@@ -136,7 +135,7 @@ export function LogsTable({ botType, logs, isLoading, refreshLogs }: LogsTablePr
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction asChild>
                       <a
-                        href="/bots/perplexity"
+                        href="/bots/perplexity/summary"
                         download="perplexity-pivot.xlsx"
                         className="inline-block w-35 text-center"
                       >
@@ -145,7 +144,7 @@ export function LogsTable({ botType, logs, isLoading, refreshLogs }: LogsTablePr
                     </AlertDialogAction>
                     <AlertDialogAction asChild>
                       <a
-                        href="/bots/chatgpt"
+                        href="/api/bots/chatgpt"
                         download="chatgpt-pivot.xlsx"
                         className="inline-block w-45 text-center"
                       >

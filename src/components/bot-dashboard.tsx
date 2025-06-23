@@ -35,10 +35,9 @@ export default function BotDashboard() {
 
   // Fetch logs on mount
   const fetchLogs = useCallback(async () => {
-    if (!selectedBot) return; 
     setIsLoadingLogs(true);
     try {
-      const response = await fetch('/api/bots/${selectedBot}/logs');
+      const response = await fetch('/api/logs');
       if (!response.ok) throw new Error('Failed to fetch logs');
       const data = await response.json();
       setLogs(data);
@@ -137,7 +136,7 @@ export default function BotDashboard() {
       }
   
       // Log session to global logs endpoint
-      const logResponse = await fetch(`/api/bots/${selectedBot}/logs`, {
+      const logResponse = await fetch('/api/logs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -353,7 +352,7 @@ export default function BotDashboard() {
         onSelectBot={handleStartBot} 
       />
 
-      <LogsTable botType={selectedBot!} logs={logs} isLoading={isLoadingLogs} refreshLogs={fetchLogs} />
+      <LogsTable logs={logs} isLoading={isLoadingLogs} refreshLogs={fetchLogs} />
     </div>
   );
 }
